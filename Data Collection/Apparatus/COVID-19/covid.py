@@ -50,7 +50,7 @@ def us_data(start_date: datetime.date, end_date: datetime.date) -> list:
     return data
 
 
-def new_cases(day: datetime.date, location: str) -> int:
+def new_cases(day: datetime.date, location: str) -> int: 
     """returns the number of new cases on any day and in any city in the United States
 
     Args:
@@ -60,14 +60,21 @@ def new_cases(day: datetime.date, location: str) -> int:
     Returns:
         int: new cases
     """
-    base_url = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/'
+    # base_url = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/'
 
     yesterday = day - datetime.timedelta(days=1)
 
     old, new = us_data(yesterday, day)
 
-    old = old.loc[old['Admin2'] == location, 'Confirmed'].iloc[0]
-    new = new.loc[new['Admin2'] == location, 'Confirmed'].iloc[0]
+    try:
+        old = old.loc[old['Admin2'] == location, 'Confirmed'].iloc[0]
+    except KeyError:
+        old = 0
+    
+    try:
+        new = new.loc[new['Admin2'] == location, 'Confirmed'].iloc[0]
+    except KeyError:
+        return 0
 
     return new - old
 
@@ -83,11 +90,14 @@ def daily_new_cases(start_date: datetime.date, end_date: datetime.date, location
         list: list of integers containing daily new cases data
     """
     cases = [new_cases(day, location) for day in days_between(start_date, end_date)]
+    return cases
 
 if __name__ == "__main__":
     start_date = datetime.date(2020, 2, 1)
-    end_date = datetime.date(2020, 7, 1)
+    end_date = datetime.date(2020, 3, 1)
 
-    print(us_data(start_date, end_date))
+    with open('us.csv', 'w') as f:
+        f.write(us_data(start_date, end_date).to_csv)
+    # print(us_data(start_date, end_date))
 
-    print(new_cases(end_date, 'San Diego'))
+    # print(new_cases(end_date, 'San Diego'))
