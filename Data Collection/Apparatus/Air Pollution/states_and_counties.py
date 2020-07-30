@@ -2,32 +2,32 @@ import pandas as pd
 from difflib import get_close_matches
 
 
-def search(data: pd.DataFrame, state: str, county: str) -> tuple:
+def search(state: str, county: str, path=r'Data Collection\Apparatus\Docs\states_and_counties.csv') -> tuple:
     """searches for a state and county and outputs their codes
 
     Args:
-        data (pd.DataFrame): dataframe to search in
         state (str): name of state
-        county (str): name of county
+        county (str): name of county that is in the state
+        path (str, optional): path to csv file containg state and county codes. Defaults to r'Data Collection\Apparatus\Docs\states_and_counties.csv'.
 
     Returns:
-        tuple: (state code, county code) both padded with zeros
+        tuple: (state code: str, county code: str) both padded with zeros
     """
 
-    states = data['State Name'].unique()
-    counties = data['County Name'].unique()
+    with open(path) as f:
+        data = pd.read_csv(f).drop('EPA Region', axis=1)
 
-    # smart search
+    states = data['State Name'].unique()
     state = get_close_matches(state, states)[0]
+
+    counties = data.loc[data['State Name'] == state]['County Name']
     county = get_close_matches(county, counties)[0]
-    
+
     state_code = data[data['State Name'] == state]['State Code'].iloc[0]
-    county_code = data[data['County Name'] == county]['County Code'][data['State Name'] == state].iloc[0]
+    county_code = data.loc[(data['State Name'] == state) & (data['County Name'] == county)]['County Code'].iloc[0]
+   
 
     return str(state_code).zfill(2), str(county_code).zfill(3)
 
-if __name__ == '__main__':
-    with open(r'Data Collection\Apparatus\Air Pollution\states_and_counties.csv') as f:
-        data = pd.read_csv(f).drop('EPA Region', axis=1)
-    
-    print(search(data, 'california', 'san diego'))
+if __name__ == '__main__':    
+    print(search('oregon', 'washington'))
