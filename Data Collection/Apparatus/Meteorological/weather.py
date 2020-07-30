@@ -14,7 +14,7 @@ import sys
 
 
 # api key, hours, start: "01-Jan-2020", end: "01-Jan-2021", ["92130"]
-def weather(api_key: str, frequency: int, start_date: str, end_date: str, zip_code: list, location_label=False, export_csv=False, store_df=True) -> pd.DataFrame:
+def weather(api_key: str, frequency: int, start_date: str, end_date: str, zip_code: list, location_label=False, export_csv=True, store_df=True) -> pd.DataFrame:
     """returns a pandas DataFrame that contains:
     location, date, average temperature, humidity, wind speed, air pressure, uvIndex
 
@@ -45,13 +45,22 @@ if __name__ == '__main__':
     API_KEY = '62c4f496efb147c1b2160953202406'
 
     frequency = 24  # hours
-    start_date = '01-JAN-2020'
-    end_date = '01-JAN-2020'
+    start_date = '01-JAN-2019'
+    end_date = '31-DEC-2019'
     api_key = API_KEY
-    location_list = ['92130'] # list of zip codes to get data from
+    # location_list = ['92130'] # list of zip codes to get data from
 
-    data = weather(api_key, frequency, start_date, end_date,
-                location_list, store_df=True, export_csv=True)
+    # data = weather(api_key, frequency, start_date, end_date,
+    #             location_list, store_df=True, export_csv=True)
 
-    with open(r'Data Collection\Data\Meteorological\\' + location_list[0] + '.csv', 'w', newline='') as f:
-        f.write(data.to_csv())
+
+    with open(r'Data Collection\Apparatus\Docs\all_zip_codes.csv') as f:
+        all_zip_codes = [code.strip().strip(',') for code in f.readlines()]
+
+    for code in all_zip_codes:
+        data = weather(api_key, 24, start_date, end_date, [code])
+        print(data)
+
+        with open(r'Data Collection\Data\Meteorological\\' + code + '.csv', 'w', newline='') as f:
+            f.write(data.to_csv())
+        
