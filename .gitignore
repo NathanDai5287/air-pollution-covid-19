@@ -2,6 +2,7 @@
 delete.py
 *.bruh
 Trash/
+old.py
 
 # vscode
 *.vscode
