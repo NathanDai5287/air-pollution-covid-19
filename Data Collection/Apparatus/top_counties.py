@@ -10,7 +10,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 import zip_conversion
 
-def most_infected(n: int, day:datetime.date) -> list:
+def most_infected(n: int, day: datetime.date, return_zip: bool) -> list:
     """returns a list of the most infected counties
 
     Args:
@@ -27,9 +27,9 @@ def most_infected(n: int, day:datetime.date) -> list:
     df = pd.read_csv(StringIO(requests.get(url).text))
     df = df.loc[df['Country_Region'] == 'US'].sort_values(by='Confirmed', ascending=False)
 
-    return [y for x in [zip_conversion.county_to_zip(county, state) for county, state in list(df.head(n)[['Admin2', 'Province_State']].values)] for y in x]
+    return [y for x in [zip_conversion.county_to_zip(county, state) for county, state in list(df.head(n)[['Admin2', 'Province_State']].values)] for y in x] if return_zip else [(county, state) for county, state in list(df.head(n)[['Admin2', 'Province_State']].values)]
 
 
 if __name__ == "__main__":
     date = datetime.date(2020, 4, 1)
-    print(most_infected(5, date))
+    print(most_infected(5, date, False))
