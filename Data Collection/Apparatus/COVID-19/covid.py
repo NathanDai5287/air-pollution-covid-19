@@ -1,5 +1,6 @@
 import datetime
 from io import StringIO
+import concurrent.futures
 import os
 import sys
 
@@ -100,25 +101,44 @@ def daily_new_cases(start_date: datetime.date, end_date: datetime.date, location
     return cases
 
 
-def confirmed_cases(day: datetime.date, location: str) -> int:
+def confirmed_cases(day: datetime.date, county: str, state: str) -> int:
     day = day.strftime('%m-%d-%Y')
     url = f'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/{day}.csv'
 
     df = pd.read_csv(StringIO(requests.get(url).text))
     df = df.loc[df['Country_Region'] == 'US']
+    df = df.loc[df['Province_State'] == state]
     df = df[['Admin2', 'Confirmed']]
 
-    return int(df.loc[df['Admin2'] == location]['Confirmed'].iloc[0])
+    return int(df.loc[df['Admin2'] == county]['Confirmed'].iloc[0])
 
+
+def daily_confirmed_cases_complete(start_date, end_date, county, state):
+    cases = {}
+    for day in days_between(start_date, end_date):
+        cases[day] = confirmed_cases(day, county, state)
+
+    cases = pd.DataFrame([[key, value] for key, value in cases.items()])
+    cases.columns = ['Date', 'Confirmed']
+    cases.set_index('Date', inplace=True)
+
+    with open(r'Data Collection\Data\COVID-19\\' + county + '.csv', 'w', newline='') as f:
+        f.write(cases.to_csv())
 
 if __name__ == "__main__":
     start_date = datetime.date(2020, 4, 1)
     end_date = datetime.date(2020, 5, 31)
 
-    for county in most_infected(5, start_date, False):
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        _ = [executor.submit(daily_confirmed_cases_complete, start_date, end_date, county, state) for county, state in most_infected(5, start_date, False)]
+    exit(0)
+    daily_confirmed_cases_complete(start_date, end_date, 'New York City', 'New York')
+
+
+    for county, state in most_infected(5, start_date, False):
         cases = {}
         for day in days_between(start_date, end_date):
-            cases[day] = confirmed_cases(day, county)
+            cases[day] = confirmed_cases(day, county, state)
 
         cases = pd.DataFrame([[key, value] for key, value in cases.items()])
         cases.columns = ['Date', 'Confirmed']
