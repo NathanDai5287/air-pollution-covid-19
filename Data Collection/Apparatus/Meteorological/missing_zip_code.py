@@ -1,11 +1,31 @@
 import glob
 
-zip_codes = [zip_code[-8:-4] for zip_code in glob.glob(r'Data Collection\Data\Meteorological\*.csv')]
+def zip_codes_to_go(target: list, zip_code: list) -> list:
+    """finds the zip codes that haven't been used
 
-with open(r'Data Collection\Apparatus\Docs\zip_codes.csv') as f:
-    target = [zip_code.strip(',\n') for zip_code in f.readlines()][:3000]
-print(list(set(zip_codes + target)))
+    Args:
+        target (list): the list of zip codes that you want
+        zip_code (list): the list of zip codes that you already have
 
-with open('code.csv', 'w') as f:
-    for code in zip_codes:
-        f.write(code.zfill(5) + ',\n')
+    Returns:
+        list: list of zip codes that you still need
+    """
+    
+    combined = target + zip_code
+
+    for code in target:
+        if (combined.count(code) > 1):
+            combined = [i for i in combined if i != code]
+    
+    return sorted(combined)
+
+
+if __name__ == "__main__":
+    zip_codes = [zip_code[zip_code.find('Meteorological\\') + 15:zip_code.find('.csv')] for zip_code in glob.glob(r'Data Collection\Data\Meteorological\*.csv')]
+    # zip_codes = [zip_code for zip_code in glob.glob(r'Data Collection\Data\Meteorological\*.csv')]
+
+    with open(r'Data Collection\Apparatus\Docs\zip_codes_to_use.csv') as f:
+        target = [zip_code.strip(',\n') for zip_code in f.readlines()]
+
+    with open(r'Data Collection\Apparatus\Docs\missing.csv', 'w') as f:
+        f.writelines('\n'.join(zip_codes_to_go(target, zip_codes)))

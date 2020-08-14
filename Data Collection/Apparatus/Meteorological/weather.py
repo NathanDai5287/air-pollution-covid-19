@@ -7,7 +7,7 @@ import datetime
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
-from top_counties import most_infected
+import top_counties
 
 """
 ['date_time', 'maxtempC', 'mintempC', 'totalSnow_cm', 'sunHour',
@@ -18,7 +18,7 @@ from top_counties import most_infected
 """
 
 
-def weather(start_date: str, end_date: str, zip_codes: list, frequency: int, api_key='03347c11e286435386945637203107') -> None:
+def weather(start_date: str, end_date: str, zip_codes: list, frequency: int, api_key='162d84002dfb496093e40536203107') -> None:
     """writes to a csv file in the meteorological data directory containing 1 year's worth of meteorological data
 
     Args:
@@ -26,7 +26,7 @@ def weather(start_date: str, end_date: str, zip_codes: list, frequency: int, api
         end_date (str): end date inclusive; '02-Jan-2020'
         zip_code (list): list of zip codes
         frequency (int): frequency in hours, usually 24
-        api_key (str, optional): obtained from website. Defaults to 'd10267c436334ca88d5222321203007'.
+        api_key (str, optional): obtained from website. Defaults to 'fd550a6fcdd34dd6b6c71248200708'.
     """
 
     retrieve_hist_data(api_key, zip_codes, start_date, end_date, frequency,
@@ -44,7 +44,7 @@ def weather(start_date: str, end_date: str, zip_codes: list, frequency: int, api
 
 if __name__ == '__main__':
 
-    API_KEY = '03347c11e286435386945637203107' # max 500 requests per day
+    API_KEY = '7cc48f71b5d94d6abb6191130203007' # max 500 requests per day
 
     frequency = 24  # hours
     # start_date = '01-JAN-2019'
@@ -56,13 +56,26 @@ if __name__ == '__main__':
     api_key = API_KEY
 
     # use this to test if all requests have been used
-    # weather(start_date, end_date, ['60004'], 24)
+    # weather(start_date, end_date, ['92130'], 24)
+    # exit(0)
 
     # with concurrent.futures.ThreadPoolExecutor() as executor:
         # executor.submit(weather, str_start_date, str_end_date, ['60001'], 24)
     # exit(0)
-    
-    zip_codes = most_infected(5, start_date, True)
 
-    with concurrent.futures.ThreadPoolExecutor() as executor:
-        _ = [executor.submit(weather, str_start_date, str_end_date, [str(code)], 24) for code in zip_codes]
+    # counties = top_counties.top_percent(0.8, start_date)
+    # zip_codes = top_counties.most_infected(counties, start_date, True)
+
+    # with open(r'Data Collection\Apparatus\Docs\zip_codes.csv') as f:
+        # zip_codes = [i.strip().replace(',', '') for i in f.readlines()]
+    # print(zip_codes)
+    # exit(0)
+
+    with open(r'Data Collection\Apparatus\Docs\missing.csv') as f:
+        zip_codes = [i.strip() for i in f.readlines()]
+        
+    # print(zip_codes)
+    # exit(0)
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=500) as executor:
+        _ = [executor.submit(weather, str_start_date, str_end_date, [str(code)], 24) for code in zip_codes[:500]]
