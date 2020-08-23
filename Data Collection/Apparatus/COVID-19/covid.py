@@ -122,16 +122,20 @@ def daily_confirmed_cases_complete(start_date, end_date, county, state):
     cases.columns = ['Date', 'Confirmed']
     cases.set_index('Date', inplace=True)
 
-    with open(r'Data Collection\Data\COVID-19\\' + county + '.csv', 'w', newline='') as f:
+    with open(r'Data Collection\Data\COVID-19\\' + state.replace(' ', '-') + '_' + county.replace(' ', '-') + '.csv', 'w', newline='') as f:
         f.write(cases.to_csv())
 
 if __name__ == "__main__":
     start_date = datetime.date(2020, 4, 1)
     end_date = datetime.date(2020, 5, 31)
 
+    with open(r'Data Collection\Apparatus\Docs\counties.csv') as f:
+        locations = list(map(tuple, [(''.join([i for i in j if i.isalpha() or i == ',' or i == ' ']).split(', ')) for j in f.readlines()]))
+
     with concurrent.futures.ThreadPoolExecutor() as executor:
-        _ = [executor.submit(daily_confirmed_cases_complete, start_date, end_date, county, state) for county, state in most_infected(5, start_date, False)]
+        _ = [executor.submit(daily_confirmed_cases_complete, start_date, end_date, county, state) for county, state in locations[::-1]]
     exit(0)
+
     daily_confirmed_cases_complete(start_date, end_date, 'New York City', 'New York')
 
 

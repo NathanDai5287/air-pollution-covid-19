@@ -128,7 +128,7 @@ if __name__ == '__main__':
     end_date = datetime.date(2019, 5, 31)
 
     with open(r'Data Collection\Apparatus\Docs\zip_codes.csv') as f:
-        zip_codes = [i.strip().replace(',', '') for i in f.readlines()]
+        zip_codes = [i.strip() for i in f.readlines()]
 
     for zip_code in zip_codes[zip_codes.index('60131'):]:
         state, county = zip_conversion.zip_to_location(zip_code)

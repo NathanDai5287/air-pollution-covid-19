@@ -31,7 +31,7 @@ def complete_air_pollution(zip_code, parameters, start: str, end: str):
 
 if __name__ == "__main__":
     with open(r'Data Collection\Apparatus\Docs\zip_codes.csv') as f:
-        zip_codes = [i.strip().replace(',', '') for i in f.readlines()]
+        zip_codes = [i.strip() for i in f.readlines()]
 
     # complete_air_pollution('92130', parameters)
     # exit(0)

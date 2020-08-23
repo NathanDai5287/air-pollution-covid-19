@@ -24,8 +24,9 @@ if __name__ == "__main__":
     zip_codes = [zip_code[zip_code.find('Meteorological\\') + 15:zip_code.find('.csv')] for zip_code in glob.glob(r'Data Collection\Data\Meteorological\*.csv')]
     # zip_codes = [zip_code for zip_code in glob.glob(r'Data Collection\Data\Meteorological\*.csv')]
 
-    with open(r'Data Collection\Apparatus\Docs\zip_codes_to_use.csv') as f:
-        target = [zip_code.strip(',\n') for zip_code in f.readlines()]
+    with open(r'Data Collection\Apparatus\Docs\zip_codes.csv') as f:
+        target = [zip_code.strip() for zip_code in f.readlines()]
 
-    with open(r'Data Collection\Apparatus\Docs\missing.csv', 'w') as f:
+    # with open(r'Data Collection\Apparatus\Docs\missing.csv', 'w') as f:
+    with open(r'missing.csv', 'w') as f:
         f.writelines('\n'.join(zip_codes_to_go(target, zip_codes)))

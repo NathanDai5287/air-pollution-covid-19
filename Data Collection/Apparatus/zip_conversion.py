@@ -29,7 +29,7 @@ def state_to_abbreviation(state: str, df: pd.DataFrame) -> str:
 
     Args:
         state (str): name of state
-        path (regexp, optional): path to database. Defaults to r'Data Collection\Apparatus\Docs\states_and_counties.csv'.
+        df (regexp, optional): 'Data Collection\Apparatus\Docs\states_and_counties.csv'
 
     Returns:
         str: abbreviated state name

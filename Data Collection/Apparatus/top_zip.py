@@ -15,7 +15,7 @@ for location in locations:
     zip_codes += zip_code
     dictionary[str(location)] = str(zip_code).zfill(5)
 
-with open(r'zip.json', 'w') as f:
+with open(r'Data Collection\Apparatus\Docs\county_zip_map.json', 'w') as f:
     f.write(json.dumps(dictionary))
 
 with open(r'zip.csv', 'w') as f:

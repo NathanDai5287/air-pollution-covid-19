@@ -18,7 +18,7 @@ import top_counties
 """
 
 
-def weather(start_date: str, end_date: str, zip_codes: list, frequency: int, api_key='162d84002dfb496093e40536203107') -> None:
+def weather(start_date: str, end_date: str, zip_codes: list, frequency: int, api_key='f098932734bd498196c175043201708') -> None:
     """writes to a csv file in the meteorological data directory containing 1 year's worth of meteorological data
 
     Args:
@@ -26,7 +26,7 @@ def weather(start_date: str, end_date: str, zip_codes: list, frequency: int, api
         end_date (str): end date inclusive; '02-Jan-2020'
         zip_code (list): list of zip codes
         frequency (int): frequency in hours, usually 24
-        api_key (str, optional): obtained from website. Defaults to 'fd550a6fcdd34dd6b6c71248200708'.
+        api_key (str, optional): obtained from website. Defaults to '7cc48f71b5d94d6abb6191130203007'.
     """
 
     retrieve_hist_data(api_key, zip_codes, start_date, end_date, frequency,
@@ -56,8 +56,8 @@ if __name__ == '__main__':
     api_key = API_KEY
 
     # use this to test if all requests have been used
-    # weather(start_date, end_date, ['92130'], 24)
-    # exit(0)
+    weather(start_date, end_date, ['85096'], 24)
+    exit(0)
 
     # with concurrent.futures.ThreadPoolExecutor() as executor:
         # executor.submit(weather, str_start_date, str_end_date, ['60001'], 24)
@@ -77,5 +77,5 @@ if __name__ == '__main__':
     # print(zip_codes)
     # exit(0)
 
-    with concurrent.futures.ThreadPoolExecutor(max_workers=500) as executor:
-        _ = [executor.submit(weather, str_start_date, str_end_date, [str(code)], 24) for code in zip_codes[:500]]
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        _ = [executor.submit(weather, str_start_date, str_end_date, [str(code)], 24) for code in zip_codes]
