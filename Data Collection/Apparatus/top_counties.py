@@ -86,11 +86,12 @@ def top_percent(n: float, day: datetime.date) -> int:
 if __name__ == "__main__":
     date = datetime.date(2020, 4, 1)
     zip_code = False
-    a = top_percent(0.8, date)
-    b = most_infected(a, date, zip_code)
+    a = top_percent(0.77, date)
+    # b = most_infected(a, date, zip_code)
+    print(a)
 
     # print(a)
-    # exit(0)
+    exit(0)
 
     with open('counties.csv', 'w', newline='') as f:
         writer = csv.writer(f)

@@ -3,6 +3,7 @@ import os
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
+import datetime
 from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
 import pandas as pd
 
@@ -24,7 +25,8 @@ def complete_air_pollution(zip_code, parameters, start: str, end: str):
         if (isinstance(data, pd.DataFrame)):
             df = data.join(df, how='outer')
 
-    with open(r'Data Collection\Data\extra\\' + str(zip_code) + '.csv', 'w', newline='') as f:
+    # with open(r'Data Collection\Data\extra\\' + str(zip_code) + '.csv', 'w', newline='') as f:
+    with open(r'C:\Users\natha\Programming\long-term-air-pollution\Data\Air Pollution\2015\\' + str(zip_code) + '.csv', 'w', newline='') as f:
         f.write(df.to_csv())
 
     print('Export ' + zip_code + ' Completed')
@@ -36,5 +38,8 @@ if __name__ == "__main__":
     # complete_air_pollution('92130', parameters)
     # exit(0)
 
+    start_date_string = datetime.date(2015, 1, 1).strftime('%Y%m%d')
+    end_date_string = datetime.date(2015, 12, 31).strftime('%Y%m%d')
+
     with ThreadPoolExecutor() as executor:
-        _ = [executor.submit(complete_air_pollution, zip_code, parameters, start_date_string, end_date_string) for zip_code in zip_codes[zip_codes.index('60426'):]]
+        _ = [executor.submit(complete_air_pollution, zip_code, parameters, start_date_string, end_date_string) for zip_code in zip_codes]

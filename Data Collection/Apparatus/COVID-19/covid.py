@@ -58,47 +58,47 @@ def us_data(start_date: datetime.date, end_date: datetime.date) -> list:
     return data
 
 
-def new_cases(day: datetime.date, location: str) -> int:
-    """returns the number of new cases on any day and in any city in the United States
+# def new_cases(day: datetime.date, location: str) -> int:
+#     """returns the number of new cases on any day and in any city in the United States
 
-    Args:
-        day (datetime.date): day to get new cases
-        location (str): county to get new cases
+#     Args:
+#         day (datetime.date): day to get new cases
+#         location (str): county to get new cases
 
-    Returns:
-        int: new cases
-    """
+#     Returns:
+#         int: new cases
+#     """
 
-    yesterday = day - datetime.timedelta(days=1)
+#     yesterday = day - datetime.timedelta(days=1)
 
-    old, new = us_data(yesterday, day)
+#     old, new = us_data(yesterday, day)
 
-    try:
-        old = old.loc[old['Admin2'] == location, 'Confirmed'].iloc[0]
-    except KeyError:
-        old = 0
+#     try:
+#         old = old.loc[old['Admin2'] == location, 'Confirmed'].iloc[0]
+#     except KeyError:
+#         old = 0
 
-    try:
-        new = new.loc[new['Admin2'] == location, 'Confirmed'].iloc[0]
-    except KeyError:
-        return 0
+#     try:
+#         new = new.loc[new['Admin2'] == location, 'Confirmed'].iloc[0]
+#     except KeyError:
+#         return 0
 
-    return new - old
+#     return new - old
 
-def daily_new_cases(start_date: datetime.date, end_date: datetime.date, location: str) -> list:
-    """returns the daily new cases data for a specific county
+# def daily_new_cases(start_date: datetime.date, end_date: datetime.date, location: str) -> list:
+#     """returns the daily new cases data for a specific county
 
-    Args:
-        start_date (datetime.date): start date
-        end_date (datetime.date): end date
-        location (str): county
+#     Args:
+#         start_date (datetime.date): start date
+#         end_date (datetime.date): end date
+#         location (str): county
 
-    Returns:
-        list: list of integers containing daily new cases data
-    """
-    cases = [new_cases(day, location)
-             for day in days_between(start_date, end_date)]
-    return cases
+#     Returns:
+#         list: list of integers containing daily new cases data
+#     """
+#     cases = [new_cases(day, location)
+#              for day in days_between(start_date, end_date)]
+#     return cases
 
 
 def confirmed_cases(day: datetime.date, county: str, state: str) -> int:
@@ -123,10 +123,11 @@ def daily_confirmed_cases_complete(start_date, end_date, county, state):
     cases.set_index('Date', inplace=True)
 
     with open(r'Data Collection\Data\COVID-19\\' + state.replace(' ', '-') + '_' + county.replace(' ', '-') + '.csv', 'w', newline='') as f:
+        print(county + ', ' + state + ' export complete')
         f.write(cases.to_csv())
 
 if __name__ == "__main__":
-    start_date = datetime.date(2020, 4, 1)
+    start_date = datetime.date(2020, 3, 31)
     end_date = datetime.date(2020, 5, 31)
 
     with open(r'Data Collection\Apparatus\Docs\counties.csv') as f:

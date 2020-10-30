@@ -7,6 +7,7 @@ from difflib import get_close_matches
 import time
 import sys
 import os
+from pathlib import Path
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
@@ -118,19 +119,19 @@ if __name__ == '__main__':
     # with open(r'Data Collection\Apparatus\Docs\all_zip_codes.csv') as f:
     #     all_zip_codes = [code.strip().strip(',') for code in f.readlines()]
 
-    
+    year = 2015
 
     # start_date = datetime.date(2019, 1, 1).strftime('%Y%m%d')
-    start_date_string = datetime.date(2020, 4, 1).strftime('%Y%m%d')
-    start_date = datetime.date(2020, 4, 1)
+    start_date_string = datetime.date(year, 1, 1).strftime('%Y%m%d')
+    # start_date = datetime.date(2015, 1, 1)
     # end_date = datetime.date(2019, 12, 31).strftime('%Y%m%d')
-    end_date_string = datetime.date(2020, 5, 31).strftime('%Y%m%d')
-    end_date = datetime.date(2019, 5, 31)
+    end_date_string = datetime.date(year, 12, 31).strftime('%Y%m%d')
+    # end_date = datetime.date(2015, 12, 31)
 
-    with open(r'Data Collection\Apparatus\Docs\zip_codes.csv') as f:
-        zip_codes = [i.strip() for i in f.readlines()]
+    with open(r'C:\Users\natha\Programming\long-term-air-pollution\missing_2015.csv') as f:
+        zip_codes = list(reversed([i.strip() for i in f.readlines()]))
 
-    for zip_code in zip_codes[zip_codes.index('60131'):]:
+    for zip_code in zip_codes:
         state, county = zip_conversion.zip_to_location(zip_code)
         state, county = location_to_code(state, county)
 
@@ -142,7 +143,8 @@ if __name__ == '__main__':
             if (isinstance(data, pd.DataFrame)):
                 df = data.join(df, how='outer')
 
-        with open(r'Data Collection\Data\Air Pollution\\' + str(zip_code) + '.csv', 'w', newline='') as f:
+        # with open(r'Data Collection\Data\Air Pollution\\' + str(zip_code) + '.csv', 'w', newline='') as f:
+        with open(Path('C:/Users/natha/Programming/long-term-air-pollution/Data/Air Pollution/' + str(year) + '/' + str(zip_code) + '.csv'), 'w', newline='') as f:
             f.write(df.to_csv())
 
         print('Export ' + zip_code + ' Completed')
